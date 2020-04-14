@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.room.mapper.CustomerMapper">
+  <resultMap id="BaseResultMap" type="net.room.entity.Customer">
+    <id column="cusID" jdbcType="VARCHAR" property="cusID" />
+    <result column="cusName" jdbcType="VARCHAR" property="cusName" />
+    <result column="cusTel" jdbcType="VARCHAR" property="cusTel" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    cusID, cusName, cusTel, sex
+  </sql>
+  <!-- 通过ID查询 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_customer
+    where cusID = #{cusID,jdbcType=VARCHAR}
+  </select>
+  <!-- 查询所有数据 -->
+  <select id="selectCustomers" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_customer
+  </select>
+  <!-- 通过ID删除 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_customer
+    where cusID = #{cusID,jdbcType=VARCHAR}
+  </delete>
+  <!-- 插入数据 -->
+  <insert id="insert" parameterType="net.room.entity.Customer">
+    insert into t_customer (cusID, cusName, cusTel, 
+      sex)
+    values (#{cusID,jdbcType=VARCHAR}, #{cusName,jdbcType=VARCHAR}, #{cusTel,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=VARCHAR})
+  </insert>
+<!-- 通过id更新数据 -->
+  <update id="updateByPrimaryKey" parameterType="net.room.entity.Customer">
+    update t_customer
+    set cusName = #{cusName,jdbcType=VARCHAR},
+      cusTel = #{cusTel,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR}
+    where cusID = #{cusID,jdbcType=VARCHAR}
+  </update>
+</mapper>

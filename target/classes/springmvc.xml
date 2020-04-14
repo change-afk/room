@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx.xsd
+			http://www.springframework.org/schema/mvc 
+			http://www.springframework.org/schema/mvc/spring-mvc.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- mvc 注解驱动 -->
+	<mvc:annotation-driven />
+
+
+	<!-- 扫描controller的位置 -->
+	<context:component-scan
+		base-package="net.room.controller" /> 
+
+	<!-- 内容协商 根据扩展名和参数不同 返回不同的东西 客户端根据不同的扩展名返回不同的格式数据 -->
+	<bean id="contentNegotiationManager"
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<!-- 扩展名至mimeType的映射,即 /student/get.json => application/json -->
+		<property name="favorPathExtension" value="true" />
+		<!-- 用于开启 /student/get?format=json 的支持 -->
+		<property name="favorParameter" value="true" />
+		<property name="parameterName" value="format" />
+		<!-- 是否忽略Accept Header -->
+		<property name="ignoreAcceptHeader" value="false" />
+		<!--扩展名到MIME的映射；favorPathExtension, favorParameter是true时起作用 -->
+		<property name="mediaTypes">
+			<value>
+				json=application/json
+				xml=application/xml
+				html=text/html
+			</value>
+		</property>
+		<property name="defaultContentType" value="text/html" />
+	</bean>
+
+	<!-- 内容协商的解析器 配合内容协商器 -->
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="viewResolvers">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="viewClass"
+						value="org.springframework.web.servlet.view.JstlView" />
+					<property name="prefix" value="/html/" />
+					<property name="suffix" value=".jsp"></property>
+				</bean>
+				
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<!-- for application/json -->
+				<!-- view -->
+				<bean
+					class="com.alibaba.fastjson.support.spring.FastJsonJsonView" />
+			</list>
+		</property>
+	</bean>
+	<!-- 放行静态资源访问 -->
+	<mvc:resources location="/js/" mapping="/js/**" />
+	<mvc:resources location="/html/" mapping="/html/**" />
+	<mvc:resources location="/assets/" mapping="/assets/**" />
+
+	<!-- 文件上传配置 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize">
+			<value>100000</value>
+		</property>
+		<property name="defaultEncoding">
+			<value>UTF-8</value>
+		</property>
+	</bean>
+
+	<!-- 异常处理器 -->
+	<!-- <bean id="handlerExceptionResolver"
+		class="net.room.exception.MyExceptionResolver" /> -->
+
+</beans>

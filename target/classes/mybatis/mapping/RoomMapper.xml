@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.room.mapper.RoomMapper">
+  <resultMap id="BaseResultMap" type="net.room.entity.Room">
+    <id column="roomID" jdbcType="INTEGER" property="roomID" />
+    <result column="roomType" jdbcType="VARCHAR" property="roomType" />
+    <result column="roomPrice" jdbcType="DOUBLE" property="roomPrice" />
+    <result column="roomState" jdbcType="VARCHAR" property="roomState" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID,roomID, roomType, roomPrice, roomState
+  </sql>
+ <!-- 返回一个对象 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_room
+    where ID = #{ID,jdbcType=VARCHAR}
+  </select>
+<!-- 返回多个对象 -->
+  <select id="selectRooms" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_room
+  </select>
+<!-- 返回多个空房间 -->
+  <select id="selectNoRooms" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_room
+    where roomState="空房间"
+  </select>
+  <!-- 以ID删除 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_room
+    where ID = #{ID,jdbcType=VARCHAR}
+  </delete>
+  <!-- 增加房间信息 -->
+  <insert id="insert" parameterType="net.room.entity.Room">
+    insert into t_room (ID,roomID, roomType, roomPrice, roomState)
+    values (#{ID,jdbcType=VARCHAR}, #{roomID,jdbcType=INTEGER}, #{roomType,jdbcType=VARCHAR}, #{roomPrice,jdbcType=DOUBLE}, 
+      #{roomState,jdbcType=VARCHAR})
+  </insert>
+  <!-- 以ID更新 -->
+  <update id="updateByPrimaryKey" parameterType="net.room.entity.Room">
+    update t_room
+    set roomID = #{roomID,jdbcType=INTEGER},
+      roomType = #{roomType,jdbcType=VARCHAR},
+      roomPrice = #{roomPrice,jdbcType=DOUBLE},
+      roomState = #{roomState,jdbcType=VARCHAR}
+    where ID = #{ID,jdbcType=VARCHAR}
+  </update>
+  <!-- 以ID更新房间状态 -->
+  <update id="updatestate" parameterType="java.lang.Integer">
+    update t_room
+    set roomState = "未入住"
+    where roomID = #{ID,jdbcType=INTEGER}
+  </update>
+  <!-- 以ID更新房间状态(入住和退房) -->
+  <update id="updatestate2" parameterType="java.lang.Integer">
+    update t_room
+    set roomState = "已入住"
+    where roomID = #{ID,jdbcType=INTEGER}
+  </update>
+  <!-- 以ID更新房间状态(入住和退房) -->
+  <update id="updatestate3" parameterType="java.lang.Integer">
+    update t_room
+    set roomState = "空房间"
+    where roomID = #{ID,jdbcType=INTEGER}
+  </update>
+</mapper>
